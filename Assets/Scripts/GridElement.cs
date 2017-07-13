@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class GridElement : MonoBehaviour {
 
-	public static int NONE = 0;
-	public static int FIRST = 1;
-	public static int SECOND = 2;
+	private float fadeDuration = 0.2f; //in seconds
+	private float scaleMultiplier = 1.4f;
 
 	public Color colorNonePlayer;
 	public Color colorFistPlayer;
 	public Color colorSecondPlayer;
+
+	private float defaultScale;
 
 	//0 is no player, 1 is first player, 2 is second player
 	public int player;
@@ -18,19 +19,33 @@ public class GridElement : MonoBehaviour {
 	private SpriteRenderer spriteRenderer;
 
 	void Start () {
+		defaultScale = this.transform.localScale.x;
+
 		spriteRenderer = GetComponent<SpriteRenderer> ();
 		spriteRenderer.color = colorNonePlayer;
 		player = 0;
 	}
 
+	void Update() {
+		float scale = Mathf.Lerp (transform.localScale.x, defaultScale, Time.deltaTime / fadeDuration);
+
+		setScale (scale);
+	}
+
 	public void setPlayer(int player) {
 		this.player = player;
-		if (player == NONE) {
+		if (player == GameManager.NONE) {
 			spriteRenderer.color = colorNonePlayer;
-		} else  if(player == FIRST){
+		} else  if(player == GameManager.FIRSTPLAYER){
 			spriteRenderer.color = colorFistPlayer;
-		} else if(player == SECOND) {
+			setScale (defaultScale * scaleMultiplier);
+		} else if(player == GameManager.SECONDPLAYER) {
 			spriteRenderer.color = colorSecondPlayer;
+			setScale (defaultScale * scaleMultiplier);
 		}
+	}
+
+	private void setScale(float scale) {
+		transform.localScale = new Vector3 (scale, scale, scale);
 	}
 }

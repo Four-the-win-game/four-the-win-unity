@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class GameBoardInput : MonoBehaviour {
 
+	public GameManager gameManager;
+
 	// Update is called once per frame
 	void Update () {
-		checkInputTouch ();
-		checkMouseInput ();
+		if (!GameManager.isGameOver()) {
+			checkInputTouch ();
+			checkMouseInput ();
+		}
 	}
 
 	private void checkInputTouch() {
@@ -40,21 +44,23 @@ public class GameBoardInput : MonoBehaviour {
 
 	private void hover(GameObject gameObject) {
 		InputElement input = gameObject.GetComponent<InputElement> ();
-		if (input != null) {
+		if (input != null && input.canInsert ()) {
 			input.onHover ();
 		}
 	}
 
 	private void click(GameObject gameObject) {
 		InputElement input = gameObject.GetComponent<InputElement> ();
-		if (input != null) {
-			input.onClick (GameManager.actualPlayer);
+		if (input != null && input.canInsert ()) {
+			input.onClick (GameManager.getActualPlayer());
 
-			if (GameManager.actualPlayer == 1) {
-				GameManager.actualPlayer = 2;
+			if (GameManager.getActualPlayer() == GameManager.FIRSTPLAYER) {
+				gameManager.setActualPlayer(GameManager.SECONDPLAYER);
 			} else {
-				GameManager.actualPlayer = 1;
+				gameManager.setActualPlayer(GameManager.FIRSTPLAYER);
 			}
+				
+			gameManager.gameBoardChanged ();
 		}
 	}
 }

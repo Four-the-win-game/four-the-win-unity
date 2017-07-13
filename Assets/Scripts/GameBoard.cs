@@ -23,9 +23,17 @@ public class GameBoard : MonoBehaviour {
 		initGameBoardInput ();
 	}
 
+	public void reset() {
+		for (int i = 0; i < boardRows; i++) {
+			for (int j = 0; j < boardColumns; j++) {
+				board [i, j].setPlayer (GameManager.NONE);
+			}
+		}
+	}
+
 	private void initGameBoardInput() {
 		float cameraSize = getCameraSize ();
-		float scaleSprite = getScaleSprite (cameraSize - 2);
+		float scaleSprite = getScaleSprite (cameraSize);
 
 		float boardX = (boardColumns + 2) * scaleSprite;
 		float boardY = (boardRows + 2) * scaleSprite;		
@@ -64,9 +72,8 @@ public class GameBoard : MonoBehaviour {
 
 	private void intitGameBoard() {
 		float cameraSize = getCameraSize ();
-		float gameBoardView = cameraSize - 2; //-2 because we want to have a gap left, right, up and down from one unit
 
-		float scaleSprite = getScaleSprite (gameBoardView);
+		float scaleSprite = getScaleSprite (cameraSize);
 
 		float boardX = boardColumns * scaleSprite;
 		float boardY = boardRows * scaleSprite;
@@ -88,9 +95,9 @@ public class GameBoard : MonoBehaviour {
 
 	private float getScaleSprite(float gameBoardView) {
 		if (boardColumns >= boardRows) {
-			return (gameBoardView / boardColumns);
+			return (gameBoardView / (boardColumns + 2));
 		} else {
-			return (gameBoardView / boardRows);
+			return (gameBoardView / (boardRows + 2));
 		}
 	}
 
@@ -118,6 +125,40 @@ public class GameBoard : MonoBehaviour {
 		} else if(position < boardColumns * 2 + boardRows * 2) { //left side
 			insertIntoRow(boardColumns * 2 + boardRows * 2 - position - 1, true, player);
 		}
+	}
+
+	public bool canInsert(int position) {
+		if(position < boardColumns) { //on top
+			return !fullColumn(position);
+		} else if(position < boardColumns + boardRows) { //right side
+			return !fullRow(position - boardColumns);
+		} else if(position < boardColumns * 2 + boardRows) { //bottom
+			return !fullColumn(boardColumns * 2 + boardRows - position - 1);
+		} else if(position < boardColumns * 2 + boardRows * 2) { //left side
+			return !fullRow(boardColumns * 2 + boardRows * 2 - position - 1);
+		}
+
+		return false;
+	}
+
+	private bool fullColumn(int column) {
+		for(int i = 0; i < boardRows; i++) {
+			if(board[i, column].player == 0) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private bool fullRow(int row) {
+		for(int i = 0; i < boardColumns; i++) {
+			if(board[row, i].player == 0) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private void insertIntoRow(int row, bool toRight, int value) {

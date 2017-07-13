@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class InputElement : MonoBehaviour {
 
-	private int position;
+	private float fadeDuration = 0.3f; //in seconds
+
 	public Color color;
 	public Color hover;
 
+	private int position;
+	private Color actualColor;
 	private SpriteRenderer spriteRenderer;
 	private GameBoard gameBoard;
 
@@ -19,11 +22,19 @@ public class InputElement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		spriteRenderer.color = color;
+		actualColor = color;
+	}
+
+	void LateUpdate() {
+		spriteRenderer.color = Color.Lerp (spriteRenderer.color, actualColor, Time.deltaTime / fadeDuration);
 	}
 
 	public void onHover() {
-		spriteRenderer.color = hover;
+		actualColor = hover;
+	}
+
+	public bool canInsert() {
+		return gameBoard.canInsert (position);
 	}
 
 	public void onClick(int player) {
