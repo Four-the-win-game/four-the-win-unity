@@ -288,11 +288,12 @@ public class GameBoard : MonoBehaviour {
 			isPreview = true;
 		}
 	}
-
 	public void cancelPreview() {
-		isPreview = false;
-		if(clonedValues != null)
-			loadElements(clonedValues);
+		if (isPreview) {
+			isPreview = false;
+			if (clonedValues != null)
+				loadElements (clonedValues);
+		}
 	}
 
 	public GridElement[,] getGameBoard() {

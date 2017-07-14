@@ -6,7 +6,10 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
 
 	public GameBoard gameBoard;
-	public GameObject winnerTextObject;
+	public GameObject pauseCanvas;
+	public GameObject gameCanvas;
+	public GameObject buttonRestart;
+	public GameObject buttonResume;
 	public Background background;
 
 	private static int actualPlayer;
@@ -24,24 +27,45 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		winnerText = winnerTextObject.GetComponentInChildren<Text> ();
+		winnerText = pauseCanvas.GetComponentInChildren<Text> ();
 		restart ();
 	}
 
 	public void restart() {
 		setActualPlayer (FIRSTPLAYER);
-		winnerTextObject.SetActive (false);
+		pauseCanvas.SetActive (false);
+		gameCanvas.SetActive (true);
 		gameOver = false;
 		gameBoard.reset ();
 	}
 
-	public void gameBoardChanged() {
-		int winner = calculateWinner(gameBoard);
+	public void backToMenu() {
+		Application.LoadLevel ("menu");
+	}
 
-		if (winner != NONE) {
-			winnerTextObject.SetActive (true);
-			gameOver = true;
-		}
+	public void pause() {
+		winnerText.text = "";
+		pauseCanvas.SetActive (true);
+		gameCanvas.SetActive (false);
+
+		buttonResume.SetActive (true);
+		buttonRestart.SetActive (false);
+		gameOver = true;
+	}
+
+	public void resume() {
+		pauseCanvas.SetActive (false);
+		gameCanvas.SetActive (true);
+
+		buttonResume.SetActive (false);
+		buttonRestart.SetActive (true);
+		gameOver = false;
+	}
+
+	public void gameEnded(int winner) {
+		pauseCanvas.SetActive (true);
+		gameCanvas.SetActive (false);
+		gameOver = true;
 
 		if (winner == FIRSTPLAYER) {
 			winnerText.text = "PLAYER ONE WINS";
@@ -49,6 +73,14 @@ public class GameManager : MonoBehaviour {
 			winnerText.text = "PLAYER TWO WINS";
 		} else if (winner == DRAW) {
 			winnerText.text = "DRAW";
+		}
+	}
+
+	public void gameBoardChanged() {
+		int winner = calculateWinner(gameBoard);
+
+		if (winner != NONE) {
+			gameEnded (winner);
 		}
 	}
 

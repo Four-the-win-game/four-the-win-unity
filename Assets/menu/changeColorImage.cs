@@ -26,7 +26,7 @@ public class changeColorImage : MonoBehaviour {
 		textColor = texts [randColor];
 
 		wait = 5f;
-		timeLastUpdate = 0f;
+		timeLastUpdate = -5f;
 	}
 
 	// Update is called once per frame
