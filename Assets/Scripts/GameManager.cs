@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour {
 	public static int FIRSTPLAYER = 1;
 	public static int SECONDPLAYER = 2;
 	public static int DRAW = 3;
+	public static int FIRSTPLAYERPEV = 4;
+	public static int SECONDPLAYERPREV = 5;
 
 	private Text winnerText;
 

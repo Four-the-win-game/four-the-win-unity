@@ -14,19 +14,30 @@ public class GameBoard : MonoBehaviour {
 	private GridElement[,] board;
 	private GameObject[] input;
 
+	public static bool isPreview;
+	private int[ , ] clonedValues;
+
 	// Use this for initialization
 	void Start () {
 		board = new GridElement[boardRows, boardColumns];
 		input = new GameObject[boardRows * 2 + boardColumns * 2];
+
+		isPreview = false;
+		previousPreviewPosition = -1;
 
 		intitGameBoard ();
 		initGameBoardInput ();
 	}
 
 	public void reset() {
+		clonedValues = new int[boardRows, boardColumns];
+		isPreview = false;
+		previousPreviewPosition = -1;
+
 		for (int i = 0; i < boardRows; i++) {
 			for (int j = 0; j < boardColumns; j++) {
 				board [i, j].setPlayer (GameManager.NONE);
+				clonedValues [i, j] = 0;
 			}
 		}
 	}
@@ -143,7 +154,7 @@ public class GameBoard : MonoBehaviour {
 
 	private bool fullColumn(int column) {
 		for(int i = 0; i < boardRows; i++) {
-			if(board[i, column].player == 0) {
+			if(board[i, column].player != GameManager.FIRSTPLAYER && board[i, column].player != GameManager.SECONDPLAYER) {
 				return false;
 			}
 		}
@@ -153,7 +164,7 @@ public class GameBoard : MonoBehaviour {
 
 	private bool fullRow(int row) {
 		for(int i = 0; i < boardColumns; i++) {
-			if(board[row, i].player == 0) {
+			if(board[row, i].player != GameManager.FIRSTPLAYER && board[row, i].player != GameManager.SECONDPLAYER) {
 				return false;
 			}
 		}
@@ -252,7 +263,58 @@ public class GameBoard : MonoBehaviour {
 		}
 	}
 
+	int previousPreviewPosition;
+
+	public void showPreview(int position, int player) {
+		if (player == GameManager.FIRSTPLAYER) {
+			player = GameManager.FIRSTPLAYERPEV;
+		} else {
+			player = GameManager.SECONDPLAYERPREV;
+		}
+
+		if (isPreview && previousPreviewPosition == position) {
+			
+		} else if(isPreview && previousPreviewPosition != position) {
+			loadElements (clonedValues);
+
+			insert (position, player);
+			previousPreviewPosition = position;
+		} else {
+			previousPreviewPosition = position;
+			clonedValues = saveElements (board);
+
+			insert (position, player);
+
+			isPreview = true;
+		}
+	}
+
+	public void cancelPreview() {
+		isPreview = false;
+		if(clonedValues != null)
+			loadElements(clonedValues);
+	}
+
 	public GridElement[,] getGameBoard() {
 		return board;
+	}
+
+	private int[,] saveElements(GridElement[,] array) {
+		int[,] clone = new int[ boardRows, boardColumns];
+		for (int i = 0; i < boardRows; i++) {
+			for (int j = 0; j < boardColumns; j++) {
+				clone [i, j] = array [i, j].player;
+			}
+		}
+
+		return clone;
+	}
+
+	private void loadElements(int[,] saved) {
+		for (int i = 0; i < boardRows; i++) {
+			for (int j = 0; j < boardColumns; j++) {
+				board [i, j].setPlayerWithoutAnimation(saved[i, j]);
+			}
+		}
 	}
 }

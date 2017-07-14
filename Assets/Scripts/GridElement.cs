@@ -11,6 +11,9 @@ public class GridElement : MonoBehaviour {
 	public Color colorFistPlayer;
 	public Color colorSecondPlayer;
 
+	public Color colorFirstPlayerPrev;
+	public Color colorSecondPlayerPrev;
+
 	private float defaultScale;
 
 	//0 is no player, 1 is first player, 2 is second player
@@ -36,12 +39,33 @@ public class GridElement : MonoBehaviour {
 		this.player = player;
 		if (player == GameManager.NONE) {
 			spriteRenderer.color = colorNonePlayer;
-		} else  if(player == GameManager.FIRSTPLAYER){
+		} else if (player == GameManager.FIRSTPLAYER) {
 			spriteRenderer.color = colorFistPlayer;
 			setScale (defaultScale * scaleMultiplier);
-		} else if(player == GameManager.SECONDPLAYER) {
+		} else if (player == GameManager.SECONDPLAYER) {
 			spriteRenderer.color = colorSecondPlayer;
 			setScale (defaultScale * scaleMultiplier);
+		} else if (player == GameManager.FIRSTPLAYERPEV) {
+			spriteRenderer.color = colorFirstPlayerPrev;
+			setScale (defaultScale * scaleMultiplier);
+		} else if (player == GameManager.SECONDPLAYERPREV) {
+			spriteRenderer.color = colorSecondPlayerPrev;
+			setScale (defaultScale * scaleMultiplier);
+		}
+	}
+
+	public void setPlayerWithoutAnimation(int player) {
+		this.player = player;
+		if (player == GameManager.NONE) {
+			spriteRenderer.color = colorNonePlayer;
+		} else  if(player == GameManager.FIRSTPLAYER){
+			spriteRenderer.color = colorFistPlayer;
+		} else if(player == GameManager.SECONDPLAYER) {
+			spriteRenderer.color = colorSecondPlayer;
+		} else if (player == GameManager.FIRSTPLAYERPEV) {
+			spriteRenderer.color = colorFirstPlayerPrev;
+		} else if (player == GameManager.SECONDPLAYERPREV) {
+			spriteRenderer.color = colorSecondPlayerPrev;
 		}
 	}
 

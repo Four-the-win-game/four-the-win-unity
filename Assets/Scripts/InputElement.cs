@@ -29,8 +29,10 @@ public class InputElement : MonoBehaviour {
 		spriteRenderer.color = Color.Lerp (spriteRenderer.color, actualColor, Time.deltaTime / fadeDuration);
 	}
 
-	public void onHover() {
+	public void onHover(int player) {
 		actualColor = hover;
+
+		gameBoard.showPreview (position, player);
 	}
 
 	public bool canInsert() {
@@ -38,6 +40,7 @@ public class InputElement : MonoBehaviour {
 	}
 
 	public void onClick(int player) {
+		gameBoard.cancelPreview ();
 		gameBoard.insert (position, player);
 	}
 

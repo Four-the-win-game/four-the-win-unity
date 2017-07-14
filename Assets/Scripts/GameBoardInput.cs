@@ -5,12 +5,23 @@ using UnityEngine;
 public class GameBoardInput : MonoBehaviour {
 
 	public GameManager gameManager;
+	public GameBoard gameBoard;
+
+	private bool hoverBefore;
+
+	void Start() {
+		hoverBefore = false;
+	}
 
 	// Update is called once per frame
 	void Update () {
 		if (!GameManager.isGameOver()) {
 			checkInputTouch ();
 			checkMouseInput ();
+		}
+
+		if (!hoverBefore) {
+			gameBoard.cancelPreview ();
 		}
 	}
 
@@ -20,6 +31,8 @@ public class GameBoardInput : MonoBehaviour {
 			// RaycastHit2D can be either true or null, but has an implicit conversion to bool, so we can use it like this
 			if (hitInfo) {
 				hover (hitInfo.transform.gameObject);
+			} else {
+				hoverBefore = false;
 			}
 		}
 	}
@@ -32,12 +45,14 @@ public class GameBoardInput : MonoBehaviour {
 			if (hitInfo) {
 				click (hitInfo.transform.gameObject);
 			}
-		} else if (!Input.GetMouseButton (0)) {
+		} else if (!Input.GetMouseButton (0) && Input.mousePresent) {
 			Vector2 pos = new Vector2 (Input.mousePosition.x, Input.mousePosition.y);
 			RaycastHit2D hitInfo = Physics2D.Raycast (Camera.main.ScreenToWorldPoint (pos), Vector2.zero);
 			// RaycastHit2D can be either true or null, but has an implicit conversion to bool, so we can use it like this
 			if (hitInfo) {
 				hover (hitInfo.transform.gameObject);
+			} else {
+				hoverBefore = false;
 			}
 		}
 	}
@@ -45,8 +60,10 @@ public class GameBoardInput : MonoBehaviour {
 	private void hover(GameObject gameObject) {
 		InputElement input = gameObject.GetComponent<InputElement> ();
 		if (input != null && input.canInsert ()) {
-			input.onHover ();
-		}
+			input.onHover (GameManager.getActualPlayer ());
+
+			hoverBefore = true;
+		} 
 	}
 
 	private void click(GameObject gameObject) {
