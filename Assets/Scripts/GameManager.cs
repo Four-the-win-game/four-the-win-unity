@@ -238,7 +238,7 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 
-		if (firstPlayerWon && secondPlayerWon) {
+		if (!movePossible() || (firstPlayerWon && secondPlayerWon)) {
 			return DRAW;
 		} else if (firstPlayerWon) {
 			return FIRSTPLAYER;
@@ -247,6 +247,22 @@ public class GameManager : MonoBehaviour {
 		} else {
 			return NONE;
 		}
+	}
+
+	private bool movePossible() {
+		GridElement[ , ] board = gameBoard.getGameBoard ();
+		int rows = gameBoard.boardRows;
+		int columns = gameBoard.boardColumns;
+
+		for (int row = 0; row < 2 * (rows + columns); row++) {
+			if (row < rows) {
+				if (gameBoard.canInsert (row)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	public void setActualPlayer(int player) {
