@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject gameCanvas;
 	public GameObject buttonRestart;
 	public GameObject buttonResume;
+	public GameObject buttonShowBoard;
 	public Background background;
 
 	private static int actualPlayer;
@@ -44,13 +45,23 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void pause() {
-		winnerText.text = "";
-		pauseCanvas.SetActive (true);
-		gameCanvas.SetActive (false);
+		if (!gameOver) { //game was paused
+			winnerText.text = "";
+			buttonShowBoard.SetActive (false);
+			pauseCanvas.SetActive (true);
+			gameCanvas.SetActive (false);
 
-		buttonResume.SetActive (true);
-		buttonRestart.SetActive (false);
-		gameOver = true;
+			buttonResume.SetActive (true);
+			buttonRestart.SetActive (false);
+			gameOver = true;
+		} else { //game was ended and paused
+			pauseCanvas.SetActive (true);
+			gameCanvas.SetActive (false);
+
+			buttonResume.SetActive (false);
+			buttonRestart.SetActive (true);
+			gameOver = true;
+		}
 	}
 
 	public void resume() {
@@ -62,7 +73,13 @@ public class GameManager : MonoBehaviour {
 		gameOver = false;
 	}
 
+	public void showBoard() {
+		pauseCanvas.SetActive (false);
+		gameCanvas.SetActive (true);
+	}
+
 	public void gameEnded(int winner) {
+		buttonShowBoard.SetActive (true);
 		pauseCanvas.SetActive (true);
 		gameCanvas.SetActive (false);
 		gameOver = true;
