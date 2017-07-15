@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class customToggle : MonoBehaviour {
 
+	public string settingsTag;
+
 	public Image background;
 	public GameObject toggleElement;
 
@@ -20,6 +22,8 @@ public class customToggle : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		toggleImage = toggleElement.GetComponent<Image> ();
+		checkedValue = PlayerPrefs.GetInt (settingsTag, checkedValue == true ? 1 : 0) == 1 ? true : false;
+
 		setToggle (checkedValue);
 	}
 	
@@ -28,16 +32,19 @@ public class customToggle : MonoBehaviour {
 		background.color = Color.Lerp (background.color, color, Time.deltaTime / fadeDuration);
 
 		float newXPosition = Mathf.Lerp (toggleElement.transform.localPosition.x, xPosition, Time.deltaTime / fadeDuration);
+
 		toggleElement.transform.localPosition = new Vector3 (newXPosition, toggleElement.transform.localPosition.y, toggleElement.transform.localPosition.z);
 	}
 
 	private void setToggle(bool enabled) {
 		if (enabled) {
-			xPosition = 58.4f;
+			xPosition = -55;
 			color = enabledColor;
+			PlayerPrefs.SetInt(settingsTag,1);
 		} else {
-			xPosition = -58.4f;
+			xPosition = -175;
 			color = disabledColor;
+			PlayerPrefs.SetInt (settingsTag,0);
 		}
 	}
 
