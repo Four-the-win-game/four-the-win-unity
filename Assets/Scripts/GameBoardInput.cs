@@ -6,21 +6,23 @@ public class GameBoardInput : MonoBehaviour {
 
 	public GameManager gameManager;
 	public GameBoard gameBoard;
+	private bool humansTurn;
 
 	private bool hoverBefore;
 
 	void Start() {
 		hoverBefore = false;
+		humansTurn = true;
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if (!GameManager.isGameOver()) {
+		if (!GameManager.isGameOver() && humansTurn) {
 			checkInputTouch ();
 			checkMouseInput ();
 		}
 
-		if (!hoverBefore) {
+		if (!hoverBefore || !humansTurn) {
 			gameBoard.cancelPreview ();
 		}
 	}
@@ -79,5 +81,9 @@ public class GameBoardInput : MonoBehaviour {
 				
 			gameManager.gameBoardChanged ();
 		}
+	}
+
+	public void setHumansTurn(bool humansTurn) {
+		this.humansTurn = humansTurn;
 	}
 }

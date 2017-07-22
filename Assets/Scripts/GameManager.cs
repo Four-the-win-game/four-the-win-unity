@@ -6,12 +6,17 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
 
 	public GameBoard gameBoard;
+	public GameBoardInput gameBoardInput;
 	public GameObject pauseCanvas;
 	public GameObject gameCanvas;
 	public GameObject buttonRestart;
 	public GameObject buttonResume;
 	public GameObject buttonShowBoard;
 	public Background background;
+
+	private int kiPlayer;
+	private Player kiImplementation;
+	private bool calculatingTurn;
 
 	private static int actualPlayer;
 	private static bool gameOver;
@@ -29,7 +34,21 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		winnerText = pauseCanvas.GetComponentInChildren<Text> ();
+		kiPlayer = SECONDPLAYER;
+		kiImplementation = new EasyKI ();
 		restart ();
+	}
+
+	void Update() {
+		if (actualPlayer == kiPlayer) {
+			//calculate ki turn and send it to gameBoard and do this asynchron
+			if (!calculatingTurn) {
+				//Start calculating turn
+				StartCoroutine("calcAndMoveKiTurn");
+			} /* else {
+				turn is calculating asynchron, do nothing
+			} */
+		}
 	}
 
 	public void restart() {
@@ -37,7 +56,17 @@ public class GameManager : MonoBehaviour {
 		pauseCanvas.SetActive (false);
 		gameCanvas.SetActive (true);
 		gameOver = false;
+		calculatingTurn = false;
 		gameBoard.reset ();
+	}
+
+	private void calcAndMoveKiTurn() {
+		int turn = kiImplementation.getNextMove (actualPlayer, gameBoard);
+		gameBoard.insert (turn, actualPlayer);
+
+		setActualPlayer((actualPlayer == FIRSTPLAYER) ? SECONDPLAYER : FIRSTPLAYER);
+
+		gameBoardChanged ();
 	}
 
 	public void backToMenu() {
@@ -94,192 +123,11 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void gameBoardChanged() {
-		int winner = calculateWinner(gameBoard);
+		int winner = gameBoard.calculateWinner(gameBoard);
 
 		if (winner != NONE) {
 			gameEnded (winner);
 		}
-	}
-
-	private int calculateWinner(GameBoard gameBoard) {
-		GridElement[ , ] board = gameBoard.getGameBoard ();
-		int rows = gameBoard.boardRows;
-		int columns = gameBoard.boardColumns;
-
-		int x,y, prev, count, playerAtField, rowCounter;
-		bool firstPlayerWon = false;
-		bool secondPlayerWon = false;
-
-		//check rows
-		for(x = 0; x < columns; x++) {
-			count = 1;
-			prev = 0;
-			for(y = 0; y < rows; y++) {
-				playerAtField = board[y, x].player;
-				if(playerAtField != prev) {
-					prev = playerAtField;
-					count = 1;
-				} else if(playerAtField == 1) { //first player
-					count++;
-					if(count >= tokensToWin) {
-						firstPlayerWon = true;
-					}
-				} else if(playerAtField == 2) { //second player
-					count++;
-					if(count >= tokensToWin) {
-						secondPlayerWon = true;
-					}
-				}
-			}
-		}
-
-		//check columns
-		for(y = 0; y < rows; y++) {
-			count = 1;
-			prev = 0;
-			for(x = 0; x < columns; x++) {
-				playerAtField = board[y, x].player;
-				if(playerAtField != prev) {
-					prev = playerAtField;
-					count = 1;
-				} else if(playerAtField == 1) { //first player
-					count++;
-					if(count >= tokensToWin) {
-						firstPlayerWon = true;
-					}
-				} else if(playerAtField == 2) { //second player
-					count++;
-					if(count >= tokensToWin) {
-						secondPlayerWon = true;
-					}
-				}
-			}
-		}
-
-		//check diagonal
-		for(x = 0; x < columns; x++) {
-			count = 1;
-			prev = 0;
-			rowCounter = 0;
-			while(x + rowCounter < columns && rowCounter < rows) {
-				playerAtField = board[rowCounter, x + rowCounter].player;
-				if(playerAtField != prev) {
-					prev = playerAtField;
-					count = 1;
-				} else if(playerAtField == 1) { //first player
-					count++;
-					if(count >= tokensToWin) {
-						firstPlayerWon = true;
-					}
-				} else if(playerAtField == 2) { //second player
-					count++;
-					if(count >= tokensToWin) {
-						secondPlayerWon = true;
-					}
-				}
-
-				rowCounter++;
-			}
-		}
-		for(y = 0; y < rows; y++) {
-			count = 1;
-			prev = 0;
-			rowCounter = 0;
-			while(x + rowCounter < rows && rowCounter < columns) {
-				playerAtField = board[y + rowCounter, rowCounter].player;
-				if(playerAtField != prev) {
-					prev = playerAtField;
-					count = 1;
-				} else if(playerAtField == 1) { //first player
-					count++;
-					if(count >= tokensToWin) {
-						firstPlayerWon = true;
-					}
-				} else if(playerAtField == 2) { //second player
-					count++;
-					if(count >= tokensToWin) {
-						secondPlayerWon = true;
-					}
-				}
-
-				rowCounter++;
-			}
-		}
-
-		for(x = 0; x < columns; x++) {
-			count = 1;
-			prev = 0;
-			rowCounter = 0;
-			while(x - rowCounter >= 0 && rowCounter < rows) {
-				playerAtField = board[rowCounter, x - rowCounter].player;
-				if(playerAtField != prev) {
-					prev = playerAtField;
-					count = 1;
-				} else if(playerAtField == 1) { //first player
-					count++;
-					if(count >= tokensToWin) {
-						firstPlayerWon = true;
-					}
-				} else if(playerAtField == 2) { //second player
-					count++;
-					if(count >= tokensToWin) {
-						secondPlayerWon = true;
-					}
-				}
-
-				rowCounter++;
-			}
-		}
-		for(y = 0; y < rows; y++) {
-			count = 1;
-			prev = 0;
-			rowCounter = 0;
-			while(y - rowCounter >= 0 && rowCounter < columns) {
-				playerAtField = board[y - rowCounter, rowCounter].player;
-				if(playerAtField != prev) {
-					prev = playerAtField;
-					count = 1;
-				} else if(playerAtField == 1) { //first player
-					count++;
-					if(count >= tokensToWin) {
-						firstPlayerWon = true;
-					}
-				} else if(playerAtField == 2) { //second player
-					count++;
-					if(count >= tokensToWin) {
-						secondPlayerWon = true;
-					}
-				}
-
-				rowCounter++;
-			}
-		}
-
-		if (!movePossible() || (firstPlayerWon && secondPlayerWon)) {
-			return DRAW;
-		} else if (firstPlayerWon) {
-			return FIRSTPLAYER;
-		} else if (secondPlayerWon) {
-			return SECONDPLAYER;
-		} else {
-			return NONE;
-		}
-	}
-
-	private bool movePossible() {
-		GridElement[ , ] board = gameBoard.getGameBoard ();
-		int rows = gameBoard.boardRows;
-		int columns = gameBoard.boardColumns;
-
-		for (int row = 0; row < 2 * (rows + columns); row++) {
-			if (row < rows) {
-				if (gameBoard.canInsert (row)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
 	}
 
 	public void setActualPlayer(int player) {
@@ -289,6 +137,13 @@ public class GameManager : MonoBehaviour {
 			background.setBackground (true);
 		} else if (player == SECONDPLAYER) {
 			background.setBackground (false);
+		}
+
+		if (player == kiPlayer) {
+			gameBoardInput.setHumansTurn (false);
+		} else {
+			gameBoardInput.setHumansTurn (true);
+			calculatingTurn = false;
 		}
 	}
 

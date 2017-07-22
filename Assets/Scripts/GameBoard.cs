@@ -263,18 +263,194 @@ public class GameBoard : MonoBehaviour {
 		}
 	}
 
+	public int calculateWinner(GameBoard gameBoard) {
+		GridElement[ , ] board = gameBoard.getGameBoard ();
+		int rows = gameBoard.boardRows;
+		int columns = gameBoard.boardColumns;
+
+		int x,y, prev, count, playerAtField, rowCounter;
+		bool firstPlayerWon = false;
+		bool secondPlayerWon = false;
+
+		//check rows
+		for(x = 0; x < columns; x++) {
+			count = 1;
+			prev = 0;
+			for(y = 0; y < rows; y++) {
+				playerAtField = board[y, x].player;
+				if(playerAtField != prev) {
+					prev = playerAtField;
+					count = 1;
+				} else if(playerAtField == 1) { //first player
+					count++;
+					if(count >= GameManager.tokensToWin) {
+						firstPlayerWon = true;
+					}
+				} else if(playerAtField == 2) { //second player
+					count++;
+					if(count >= GameManager.tokensToWin) {
+						secondPlayerWon = true;
+					}
+				}
+			}
+		}
+
+		//check columns
+		for(y = 0; y < rows; y++) {
+			count = 1;
+			prev = 0;
+			for(x = 0; x < columns; x++) {
+				playerAtField = board[y, x].player;
+				if(playerAtField != prev) {
+					prev = playerAtField;
+					count = 1;
+				} else if(playerAtField == 1) { //first player
+					count++;
+					if(count >= GameManager.tokensToWin) {
+						firstPlayerWon = true;
+					}
+				} else if(playerAtField == 2) { //second player
+					count++;
+					if(count >= GameManager.tokensToWin) {
+						secondPlayerWon = true;
+					}
+				}
+			}
+		}
+
+		//check diagonal
+		for(x = 0; x < columns; x++) {
+			count = 1;
+			prev = 0;
+			rowCounter = 0;
+			while(x + rowCounter < columns && rowCounter < rows) {
+				playerAtField = board[rowCounter, x + rowCounter].player;
+				if(playerAtField != prev) {
+					prev = playerAtField;
+					count = 1;
+				} else if(playerAtField == 1) { //first player
+					count++;
+					if(count >= GameManager.tokensToWin) {
+						firstPlayerWon = true;
+					}
+				} else if(playerAtField == 2) { //second player
+					count++;
+					if(count >= GameManager.tokensToWin) {
+						secondPlayerWon = true;
+					}
+				}
+
+				rowCounter++;
+			}
+		}
+		for(y = 0; y < rows; y++) {
+			count = 1;
+			prev = 0;
+			rowCounter = 0;
+			while(x + rowCounter < rows && rowCounter < columns) {
+				playerAtField = board[y + rowCounter, rowCounter].player;
+				if(playerAtField != prev) {
+					prev = playerAtField;
+					count = 1;
+				} else if(playerAtField == 1) { //first player
+					count++;
+					if(count >= GameManager.tokensToWin) {
+						firstPlayerWon = true;
+					}
+				} else if(playerAtField == 2) { //second player
+					count++;
+					if(count >= GameManager.tokensToWin) {
+						secondPlayerWon = true;
+					}
+				}
+
+				rowCounter++;
+			}
+		}
+
+		for(x = 0; x < columns; x++) {
+			count = 1;
+			prev = 0;
+			rowCounter = 0;
+			while(x - rowCounter >= 0 && rowCounter < rows) {
+				playerAtField = board[rowCounter, x - rowCounter].player;
+				if(playerAtField != prev) {
+					prev = playerAtField;
+					count = 1;
+				} else if(playerAtField == 1) { //first player
+					count++;
+					if(count >= GameManager.tokensToWin) {
+						firstPlayerWon = true;
+					}
+				} else if(playerAtField == 2) { //second player
+					count++;
+					if(count >= GameManager.tokensToWin) {
+						secondPlayerWon = true;
+					}
+				}
+
+				rowCounter++;
+			}
+		}
+		for(y = 0; y < rows; y++) {
+			count = 1;
+			prev = 0;
+			rowCounter = 0;
+			while(y - rowCounter >= 0 && rowCounter < columns) {
+				playerAtField = board[y - rowCounter, rowCounter].player;
+				if(playerAtField != prev) {
+					prev = playerAtField;
+					count = 1;
+				} else if(playerAtField == 1) { //first player
+					count++;
+					if(count >= GameManager.tokensToWin) {
+						firstPlayerWon = true;
+					}
+				} else if(playerAtField == 2) { //second player
+					count++;
+					if(count >= GameManager.tokensToWin) {
+						secondPlayerWon = true;
+					}
+				}
+
+				rowCounter++;
+			}
+		}
+
+		if (!movePossible() || (firstPlayerWon && secondPlayerWon)) {
+			return GameManager.DRAW;
+		} else if (firstPlayerWon) {
+			return GameManager.FIRSTPLAYER;
+		} else if (secondPlayerWon) {
+			return GameManager.SECONDPLAYER;
+		} else {
+			return GameManager.NONE;
+		}
+	}
+
+	private bool movePossible() {
+		for (int row = 0; row < 2 * (boardRows + boardColumns); row++) {
+			if (canInsert (row)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	int previousPreviewPosition;
 
 	public void showPreview(int position, int player) {
 		if (player == GameManager.FIRSTPLAYER) {
 			player = GameManager.FIRSTPLAYERPEV;
-		} else {
+		} else if(player == GameManager.SECONDPLAYER){
 			player = GameManager.SECONDPLAYERPREV;
 		}
 
 		if (isPreview && previousPreviewPosition == position) {
-			
+			//Preview did not change -> do nothing
 		} else if(isPreview && previousPreviewPosition != position) {
+			//Preview positon changed, reset field to original and insert preview
 			loadElements (clonedValues);
 
 			insert (position, player);
@@ -288,6 +464,7 @@ public class GameBoard : MonoBehaviour {
 			isPreview = true;
 		}
 	}
+
 	public void cancelPreview() {
 		if (isPreview) {
 			isPreview = false;
