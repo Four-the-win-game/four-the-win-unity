@@ -17,6 +17,19 @@ public class GameBoard : MonoBehaviour {
 	public static bool isPreview;
 	private int[ , ] clonedValues;
 
+	public GameBoard (int[,] board) {
+		boardRows = board.GetLength (0);
+		boardColumns = board.GetLength (1);
+
+		this.board = new GridElement[boardRows, boardColumns];
+
+		for (int row = 0; row < boardRows; row++) {
+			for (int column = 0; column < boardColumns; column++) {
+				this.board [row, column] = new GridElement (board[row,column]); 
+			}
+		}
+	}
+
 	// Use this for initialization
 	void Start () {
 		board = new GridElement[boardRows, boardColumns];
@@ -494,5 +507,24 @@ public class GameBoard : MonoBehaviour {
 				board [i, j].setPlayerWithoutAnimation(saved[i, j]);
 			}
 		}
+	}
+
+	public List<int> getValidTurns() {
+		List<int> validTurns = new List<int>();
+		for (int i = 0; i < boardColumns * 2 + boardRows; i++) {
+			if (canInsert (i)) {
+				validTurns.Add (i);
+			}
+		}
+
+		return validTurns;
+	}
+
+	public int[,] getBoardAsArray() {
+		return saveElements (board);
+	}
+
+	public GameBoard clone() {
+		return new GameBoard (getBoardAsArray());
 	}
 }

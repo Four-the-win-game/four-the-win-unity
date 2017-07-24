@@ -21,6 +21,10 @@ public class GridElement : MonoBehaviour {
 
 	private SpriteRenderer spriteRenderer;
 
+	public GridElement(int player) {
+		this.player = player;
+	}
+
 	void Start () {
 		defaultScale = this.transform.localScale.x;
 

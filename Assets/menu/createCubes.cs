@@ -16,7 +16,7 @@ public class createCubes : MonoBehaviour {
 	private void initCubes() {
 		for (int row = -cubeRowsHalf; row < cubeRowsHalf; row++) {
 			for (int column = -cubeRowsHalf; column < cubeRowsHalf; column++) {			
-				GameObject inputObject = Instantiate (cube, new Vector3 (row + gap * row, 0, column + gap * column), Quaternion.identity);
+				Instantiate (cube, new Vector3 (row + gap * row, 0, column + gap * column), Quaternion.identity);
 			}
 		}
 	}

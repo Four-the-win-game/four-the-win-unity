@@ -15,13 +15,13 @@ public class customToggle : MonoBehaviour {
 	public Color disabledColor;
 	public float fadeDuration; //in seconds
 
-	private Image toggleImage;
+	//private Image toggleImage;
 	private Color color;
 	private float xPosition;
 
 	// Use this for initialization
 	void Start () {
-		toggleImage = toggleElement.GetComponent<Image> ();
+		//toggleImage = toggleElement.GetComponent<Image> ();
 		checkedValue = PlayerPrefs.GetInt (settingsTag, checkedValue == true ? 1 : 0) == 1 ? true : false;
 
 		setToggle (checkedValue);

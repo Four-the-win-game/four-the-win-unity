@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour {
@@ -14,8 +15,8 @@ public class GameManager : MonoBehaviour {
 	public GameObject buttonShowBoard;
 	public Background background;
 
-	private int kiPlayer;
-	private Player kiImplementation;
+	private int kiPlayer; //which player (first or second) is the ki, 0 is no ki
+	private Player kiImplementation; //difficulty
 	private bool calculatingTurn;
 
 	private static int actualPlayer;
@@ -31,11 +32,32 @@ public class GameManager : MonoBehaviour {
 
 	private Text winnerText;
 
+	private string firstPlayerName;
+	private string secondPlayerName;
+
 	// Use this for initialization
 	void Start () {
 		winnerText = pauseCanvas.GetComponentInChildren<Text> ();
-		kiPlayer = SECONDPLAYER;
-		kiImplementation = new EasyKI ();
+
+		if (MenuAttributes.vsKi) {
+			kiPlayer = SECONDPLAYER;
+
+			if (MenuAttributes.difficulty == 1) {
+				kiImplementation = new EasyKI ();
+			} else if (MenuAttributes.difficulty == 2) {
+				kiImplementation = new EasyKI ();
+			} else {
+				kiImplementation = new HardKI ();
+			}
+
+			firstPlayerName = MenuAttributes.firstPlayerName;
+			secondPlayerName = kiImplementation.getName ();
+		} else {
+			kiPlayer = NONE;
+			firstPlayerName = MenuAttributes.firstPlayerName;
+			secondPlayerName = MenuAttributes.secondPlayerName;
+		}
+
 		restart ();
 	}
 
@@ -70,7 +92,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void backToMenu() {
-		Application.LoadLevel ("menu");
+		SceneManager.LoadScene ("menu");
 	}
 
 	public void pause() {
@@ -114,9 +136,9 @@ public class GameManager : MonoBehaviour {
 		gameOver = true;
 
 		if (winner == FIRSTPLAYER) {
-			winnerText.text = "PLAYER ONE WINS";
+			winnerText.text = "The Winner is: " + firstPlayerName;
 		} else if (winner == SECONDPLAYER) {
-			winnerText.text = "PLAYER TWO WINS";
+			winnerText.text = "The Winenr is: " + secondPlayerName;
 		} else if (winner == DRAW) {
 			winnerText.text = "DRAW";
 		}
