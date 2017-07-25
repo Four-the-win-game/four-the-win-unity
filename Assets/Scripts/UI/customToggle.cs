@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class customToggle : MonoBehaviour {
 
+	public AudioSource audio;
+
 	public string settingsTag;
 
 	public Image background;
@@ -37,6 +39,8 @@ public class customToggle : MonoBehaviour {
 	}
 
 	private void setToggle(bool enabled) {
+		audio.Play ();
+
 		if (enabled) {
 			xPosition = -55;
 			color = enabledColor;

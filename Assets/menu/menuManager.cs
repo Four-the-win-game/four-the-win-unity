@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class menuManager : MonoBehaviour {
 
+	public AudioSource tickSound;
+
 	public GameObject menuCanvas;
 	public GameObject settingsCanvas;
 	public GameObject singleplayerCanvas;
@@ -15,6 +17,19 @@ public class menuManager : MonoBehaviour {
 	public InputField secondPlayer;
 
 	void Start() {
+		//Load audio settings
+		float value = PlayerPrefs.GetFloat ("sound", 1);
+		AudioListener.volume = value;
+
+		//load language settings
+		//german or english is supported for now
+		SystemLanguage lang = Application.systemLanguage; 
+		if (lang == SystemLanguage.German) {
+			LocalizationText.SetLanguage ("DE");
+		} else {
+			//LocalizationText.SetLanguage ("EN");
+		}
+
 		menuCanvas.SetActive (true);
 		settingsCanvas.SetActive (false);
 		singleplayerCanvas.SetActive (false);
@@ -22,14 +37,18 @@ public class menuManager : MonoBehaviour {
 	}
 
 	public void startSingleplayer() {
+		tickSound.Play ();
+
 		MenuAttributes.vsKi = true;
 		//MenuAttributes.difficulty = 1; is already set in the DifficultyScript
-		MenuAttributes.firstPlayerName = "YOU";
+		MenuAttributes.firstPlayerName = LocalizationText.GetText ("you");
 
 		SceneManager.LoadScene ("singleplayer");
 	}
 
 	public void startLocalMultiplayer() {
+		tickSound.Play ();
+
 		MenuAttributes.vsKi = false;
 		MenuAttributes.firstPlayerName = firstPlayer.text;
 		MenuAttributes.secondPlayerName = secondPlayer.text;
@@ -38,6 +57,8 @@ public class menuManager : MonoBehaviour {
 	}
 
 	public void openSingleplayerMenu() {
+		tickSound.Play ();
+
 		menuCanvas.SetActive (false);
 		settingsCanvas.SetActive (false);
 		singleplayerCanvas.SetActive (true);
@@ -45,6 +66,8 @@ public class menuManager : MonoBehaviour {
 	}
 
 	public void openSettings() {
+		tickSound.Play ();
+
 		menuCanvas.SetActive (false);
 		settingsCanvas.SetActive (true);
 		singleplayerCanvas.SetActive (false);
@@ -52,6 +75,8 @@ public class menuManager : MonoBehaviour {
 	}
 
 	public void openMenu() {
+		tickSound.Play ();
+
 		menuCanvas.SetActive (true);
 		settingsCanvas.SetActive (false);
 		singleplayerCanvas.SetActive (false);
@@ -59,6 +84,8 @@ public class menuManager : MonoBehaviour {
 	}
 
 	public void openLocalMultiplayerMenu() {
+		tickSound.Play ();
+
 		menuCanvas.SetActive (false);
 		settingsCanvas.SetActive (false);
 		singleplayerCanvas.SetActive (false);

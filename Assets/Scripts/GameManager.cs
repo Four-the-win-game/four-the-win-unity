@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
+	public sounds sounds;
 	public GameBoard gameBoard;
 	public GameBoardInput gameBoardInput;
 	public GameObject pauseCanvas;
@@ -136,15 +137,25 @@ public class GameManager : MonoBehaviour {
 		gameOver = true;
 
 		if (winner == FIRSTPLAYER) {
-			winnerText.text = "The Winner is: " + firstPlayerName;
+			winnerText.text = LocalizationText.GetText ("theWinnerIs") + firstPlayerName;
+			sounds.playWinner ();
 		} else if (winner == SECONDPLAYER) {
-			winnerText.text = "The Winenr is: " + secondPlayerName;
+			winnerText.text = LocalizationText.GetText ("theWinnerIs") + secondPlayerName;
+			if (MenuAttributes.vsKi) {
+				//lost against ki
+				sounds.playLooser ();
+			} else {
+				sounds.playWinner ();
+			}
 		} else if (winner == DRAW) {
-			winnerText.text = "DRAW";
+			winnerText.text = LocalizationText.GetText ("draw");
+			sounds.playLooser ();
 		}
 	}
 
 	public void gameBoardChanged() {
+		sounds.playTick ();
+
 		int winner = gameBoard.calculateWinner(gameBoard);
 
 		if (winner != NONE) {

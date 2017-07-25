@@ -22,6 +22,8 @@ public class customSlider : MonoBehaviour {
 	private void setValue(float value) {
 		slider.value = value;
 		PlayerPrefs.SetFloat (settingsTag, value);
+
+		AudioListener.volume = value;
 	}
 
 }

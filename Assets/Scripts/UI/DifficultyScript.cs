@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class DifficultyScript : MonoBehaviour {
 
+	public AudioSource audio;
+
 	public Image star2;
 	public Image star3;
 
@@ -22,6 +24,8 @@ public class DifficultyScript : MonoBehaviour {
 	}
 	
 	public void clickedDifficulty() {
+		audio.Play ();
+
 		starsSelected++;
 
 		if (starsSelected > 3) {

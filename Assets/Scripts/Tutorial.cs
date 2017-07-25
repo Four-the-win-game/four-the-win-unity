@@ -49,6 +49,6 @@ public class Tutorial : MonoBehaviour {
 	}
 
 	private void loadTutorial(int which) {
-		textTutorial.text = stringsTutorial [tutorialCounter];
+		textTutorial.text = LocalizationText.GetText ( stringsTutorial [tutorialCounter] );
 	}
 }

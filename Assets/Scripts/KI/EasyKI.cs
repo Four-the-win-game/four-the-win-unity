@@ -13,6 +13,6 @@ public class EasyKI : Player {
 	}
 
 	public string getName() {
-		return "Easy KI";
+		return "Easy AI";
 	}
 }
