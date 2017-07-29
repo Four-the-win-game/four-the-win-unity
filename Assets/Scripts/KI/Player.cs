@@ -4,7 +4,10 @@ using UnityEngine;
 
 public interface Player {
 
-	int getNextMove (int player, GameBoard gameBoard);
+	void calcNextMove (int player, GameBoardData gameBoard);
+
+	bool finishedCalc ();
+	int getMove ();
 
 	string getName();
 }

@@ -7,10 +7,12 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
 
 	public sounds sounds;
-	public GameBoard gameBoard;
+	public GameBoard gameBoardObject;
+	private GameBoardData gameBoardData;
 	public GameBoardInput gameBoardInput;
 	public GameObject pauseCanvas;
 	public GameObject gameCanvas;
+	public GameObject aiCanvas;
 	public GameObject buttonRestart;
 	public GameObject buttonResume;
 	public GameObject buttonShowBoard;
@@ -38,21 +40,27 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		gameBoardData = gameBoardObject.getGameBoardData ();
+
 		winnerText = pauseCanvas.GetComponentInChildren<Text> ();
 
 		if (MenuAttributes.vsKi) {
-			kiPlayer = SECONDPLAYER;
-
 			if (MenuAttributes.difficulty == 1) {
-				kiImplementation = new EasyKI ();
+				kiPlayer = SECONDPLAYER;
+				kiImplementation = new HardKI (SECONDPLAYER, 2);
+				firstPlayerName = MenuAttributes.firstPlayerName;
+				secondPlayerName = kiImplementation.getName ();
 			} else if (MenuAttributes.difficulty == 2) {
-				kiImplementation = new EasyKI ();
+				kiPlayer = SECONDPLAYER;
+				kiImplementation = new HardKI (SECONDPLAYER, 3);
+				firstPlayerName = MenuAttributes.firstPlayerName;
+				secondPlayerName = kiImplementation.getName ();
 			} else {
-				kiImplementation = new HardKI ();
+				kiPlayer = FIRSTPLAYER;
+				kiImplementation = new HardKI (FIRSTPLAYER, 3);
+				firstPlayerName = kiImplementation.getName ();
+				secondPlayerName = MenuAttributes.firstPlayerName;
 			}
-
-			firstPlayerName = MenuAttributes.firstPlayerName;
-			secondPlayerName = kiImplementation.getName ();
 		} else {
 			kiPlayer = NONE;
 			firstPlayerName = MenuAttributes.firstPlayerName;
@@ -63,40 +71,51 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void Update() {
-		if (actualPlayer == kiPlayer) {
+		if (actualPlayer == kiPlayer && !gameOver) {
 			//calculate ki turn and send it to gameBoard and do this asynchron
 			if (!calculatingTurn) {
-				//Start calculating turn
-				StartCoroutine("calcAndMoveKiTurn");
-			} /* else {
-				turn is calculating asynchron, do nothing
-			} */
+				Debug.Log ("Start");
+				calculatingTurn = true;
+
+				kiImplementation.calcNextMove (actualPlayer, gameBoardData);
+			} else if (kiImplementation.finishedCalc ()) {
+				Debug.Log ("Finished");
+				aiCanvas.SetActive (false);
+				//Finsiehd calculating
+				gameBoardData.insert (kiImplementation.getMove (), actualPlayer);
+
+				setActualPlayer ((actualPlayer == FIRSTPLAYER) ? SECONDPLAYER : FIRSTPLAYER);
+
+				gameBoardChanged ();
+			} else {
+				aiCanvas.SetActive (true);
+			}
 		}
 	}
 
 	public void restart() {
+		sounds.playTick ();
+
 		setActualPlayer (FIRSTPLAYER);
 		pauseCanvas.SetActive (false);
 		gameCanvas.SetActive (true);
+		aiCanvas.SetActive (false);
 		gameOver = false;
 		calculatingTurn = false;
-		gameBoard.reset ();
-	}
 
-	private void calcAndMoveKiTurn() {
-		int turn = kiImplementation.getNextMove (actualPlayer, gameBoard);
-		gameBoard.insert (turn, actualPlayer);
-
-		setActualPlayer((actualPlayer == FIRSTPLAYER) ? SECONDPLAYER : FIRSTPLAYER);
-
-		gameBoardChanged ();
+		gameBoardObject.reset ();
+		gameBoardData.reset ();
 	}
 
 	public void backToMenu() {
+		sounds.playTick ();
+
 		SceneManager.LoadScene ("menu");
 	}
 
 	public void pause() {
+		sounds.playTick ();
+
 		if (!gameOver) { //game was paused
 			winnerText.text = "";
 			buttonShowBoard.SetActive (false);
@@ -105,10 +124,12 @@ public class GameManager : MonoBehaviour {
 
 			buttonResume.SetActive (true);
 			buttonRestart.SetActive (false);
+			aiCanvas.SetActive (false);
 			gameOver = true;
 		} else { //game was ended and paused
 			pauseCanvas.SetActive (true);
 			gameCanvas.SetActive (false);
+			aiCanvas.SetActive (false);
 
 			buttonResume.SetActive (false);
 			buttonRestart.SetActive (true);
@@ -117,53 +138,73 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void resume() {
+		sounds.playTick ();
+
 		pauseCanvas.SetActive (false);
 		gameCanvas.SetActive (true);
+		aiCanvas.SetActive (false);
 
 		buttonResume.SetActive (false);
 		buttonRestart.SetActive (true);
 		gameOver = false;
 	}
 
+	public void click(int pos) {
+		gameBoardObject.setInputElementClicked (pos);
+		gameBoardData.insert (pos, actualPlayer);
+		gameBoardChanged ();
+		changePlayer ();
+	}
+
 	public void showBoard() {
+		sounds.playTick ();
+
 		pauseCanvas.SetActive (false);
 		gameCanvas.SetActive (true);
 	}
 
-	public void gameEnded(int winner) {
+	private void gameEnded(int winner) {
 		buttonShowBoard.SetActive (true);
 		pauseCanvas.SetActive (true);
 		gameCanvas.SetActive (false);
+		aiCanvas.SetActive (false);
 		gameOver = true;
+
+		if (MenuAttributes.vsKi && kiPlayer == winner) {
+			sounds.playLooser ();
+		} else {
+			sounds.playWinner ();
+		}
 
 		if (winner == FIRSTPLAYER) {
 			winnerText.text = LocalizationText.GetText ("theWinnerIs") + firstPlayerName;
 			sounds.playWinner ();
 		} else if (winner == SECONDPLAYER) {
 			winnerText.text = LocalizationText.GetText ("theWinnerIs") + secondPlayerName;
-			if (MenuAttributes.vsKi) {
-				//lost against ki
-				sounds.playLooser ();
-			} else {
-				sounds.playWinner ();
-			}
 		} else if (winner == DRAW) {
 			winnerText.text = LocalizationText.GetText ("draw");
 			sounds.playLooser ();
 		}
 	}
 
-	public void gameBoardChanged() {
+	private void gameBoardChanged() {
 		sounds.playTick ();
 
-		int winner = gameBoard.calculateWinner(gameBoard);
+		int winner = gameBoardData.calculateWinner(gameBoardData);
 
 		if (winner != NONE) {
 			gameEnded (winner);
 		}
 	}
 
-	public void setActualPlayer(int player) {
+	private void changePlayer() {
+		if (actualPlayer == FIRSTPLAYER)
+			setActualPlayer (SECONDPLAYER);
+		else 
+			setActualPlayer(FIRSTPLAYER);
+	}
+
+	private void setActualPlayer(int player) {
 		actualPlayer = player;
 
 		if (player == FIRSTPLAYER) {

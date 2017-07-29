@@ -6,16 +6,19 @@ public class InputElement : MonoBehaviour {
 
 	private float fadeDuration = 0.3f; //in seconds
 
-	public Color color;
+	public Color defaultColor;
+	private Color color;
 	public Color hover;
+	public Color lastInsert;
 
 	private int position;
 	private Color actualColor;
 	private SpriteRenderer spriteRenderer;
-	private GameBoard gameBoard;
 
 	// Use this for initialization
 	void Start () {
+		color = defaultColor;
+
 		spriteRenderer = GetComponent<SpriteRenderer> ();
 		spriteRenderer.color = color;
 	}
@@ -29,26 +32,23 @@ public class InputElement : MonoBehaviour {
 		spriteRenderer.color = Color.Lerp (spriteRenderer.color, actualColor, Time.deltaTime / fadeDuration);
 	}
 
-	public void onHover(int player) {
+	public void onHover() {
 		actualColor = hover;
-
-		gameBoard.showPreview (position, player);
 	}
 
-	public bool canInsert() {
-		return gameBoard.canInsert (position);
+	public void inserted() {
+		color = lastInsert;
 	}
 
-	public void onClick(int player) {
-		gameBoard.cancelPreview ();
-		gameBoard.insert (position, player);
+	public void resetColor() {
+		color = defaultColor;
 	}
 
 	public void setPosition(int position) {
 		this.position = position;
 	}
 
-	public void setGameBoard(GameBoard gameBoard) {
-		this.gameBoard = gameBoard;
+	public int getPosition() {
+		return position;
 	}
 }

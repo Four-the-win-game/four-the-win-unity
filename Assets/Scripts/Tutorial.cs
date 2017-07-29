@@ -27,8 +27,6 @@ public class Tutorial : MonoBehaviour {
 
 			timeLastUpdate = Time.time;
 			tutorialCounter = 0;
-
-			loadTutorial (tutorialCounter);
 		} else {
 			textTutorialObject2.SetActive (false);
 			textTutorialObject.SetActive (false);

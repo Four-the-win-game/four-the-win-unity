@@ -16,21 +16,13 @@ public class GridElement : MonoBehaviour {
 
 	private float defaultScale;
 
-	//0 is no player, 1 is first player, 2 is second player
-	public int player;
-
 	private SpriteRenderer spriteRenderer;
-
-	public GridElement(int player) {
-		this.player = player;
-	}
 
 	void Start () {
 		defaultScale = this.transform.localScale.x;
 
 		spriteRenderer = GetComponent<SpriteRenderer> ();
 		spriteRenderer.color = colorNonePlayer;
-		player = 0;
 	}
 
 	void Update() {
@@ -40,7 +32,6 @@ public class GridElement : MonoBehaviour {
 	}
 
 	public void setPlayer(int player) {
-		this.player = player;
 		if (player == GameManager.NONE) {
 			spriteRenderer.color = colorNonePlayer;
 		} else if (player == GameManager.FIRSTPLAYER) {
@@ -59,7 +50,6 @@ public class GridElement : MonoBehaviour {
 	}
 
 	public void setPlayerWithoutAnimation(int player) {
-		this.player = player;
 		if (player == GameManager.NONE) {
 			spriteRenderer.color = colorNonePlayer;
 		} else  if(player == GameManager.FIRSTPLAYER){

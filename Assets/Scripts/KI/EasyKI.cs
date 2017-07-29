@@ -4,12 +4,21 @@ using UnityEngine;
 
 public class EasyKI : Player {
 
-	public int getNextMove (int player, GameBoard gameBoard) {
+	int turn = -1;
+
+	public void calcNextMove(int player, GameBoardData gameBoard) {
 		//Get valid turns and then choose one randomly
 		List<int> validTurns = gameBoard.getValidTurns();
 
-		int randomTurn = Random.Range (0, validTurns.Count - 1);
-		return randomTurn;
+		turn = Random.Range (0, validTurns.Count - 1);
+	}
+
+	public bool finishedCalc() {
+		return turn != -1;
+	}
+
+	public int getMove() {
+		return turn;
 	}
 
 	public string getName() {

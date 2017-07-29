@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class GameBoardInput : MonoBehaviour {
 
+	//is set in the inspector thasts why its public
 	public GameManager gameManager;
-	public GameBoard gameBoard;
+
+	public GameBoard gameBoard; //only to show preview
+
 	private bool humansTurn;
 
 	private bool hoverBefore;
@@ -61,8 +64,9 @@ public class GameBoardInput : MonoBehaviour {
 
 	private void hover(GameObject gameObject) {
 		InputElement input = gameObject.GetComponent<InputElement> ();
-		if (input != null && input.canInsert ()) {
-			input.onHover (GameManager.getActualPlayer ());
+		if (input != null && gameBoard.getGameBoardData().canInsert(input.getPosition())) {
+			gameBoard.showPreview (input.getPosition(), GameManager.getActualPlayer ());
+			input.onHover ();
 
 			hoverBefore = true;
 		} 
@@ -70,16 +74,10 @@ public class GameBoardInput : MonoBehaviour {
 
 	private void click(GameObject gameObject) {
 		InputElement input = gameObject.GetComponent<InputElement> ();
-		if (input != null && input.canInsert ()) {
-			input.onClick (GameManager.getActualPlayer());
+		if (input != null && gameBoard.getGameBoardData().canInsert (input.getPosition())) {
+			gameBoard.cancelPreview ();
 
-			if (GameManager.getActualPlayer() == GameManager.FIRSTPLAYER) {
-				gameManager.setActualPlayer(GameManager.SECONDPLAYER);
-			} else {
-				gameManager.setActualPlayer(GameManager.FIRSTPLAYER);
-			}
-				
-			gameManager.gameBoardChanged ();
+			gameManager.click (input.getPosition ());
 		}
 	}
 
