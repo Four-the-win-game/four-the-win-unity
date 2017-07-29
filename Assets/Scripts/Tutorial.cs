@@ -20,17 +20,7 @@ public class Tutorial : MonoBehaviour {
 	void Start () {
 		tutorial = PlayerPrefs.GetInt ("tutorial", 1) == 1 ? true : false;
 
-		if (tutorial) {
-			textTutorial = textTutorialObject.GetComponent<Text> ();
-			textTutorialObject2.SetActive (true);
-			textTutorialObject.SetActive (true);
-
-			timeLastUpdate = Time.time;
-			tutorialCounter = 0;
-		} else {
-			textTutorialObject2.SetActive (false);
-			textTutorialObject.SetActive (false);
-		}
+		defaultState ();
 	}
 	
 	// Update is called once per frame
@@ -48,5 +38,24 @@ public class Tutorial : MonoBehaviour {
 
 	private void loadTutorial(int which) {
 		textTutorial.text = LocalizationText.GetText ( stringsTutorial [tutorialCounter] );
+	}
+
+	public void disable() {
+		textTutorialObject2.SetActive (false);
+		textTutorialObject.SetActive (false);
+	}
+
+	public void defaultState() {
+		if (tutorial) {
+			textTutorial = textTutorialObject.GetComponent<Text> ();
+			textTutorialObject2.SetActive (true);
+			textTutorialObject.SetActive (true);
+
+			timeLastUpdate = Time.time;
+			tutorialCounter = 0;
+		} else {
+			textTutorialObject2.SetActive (false);
+			textTutorialObject.SetActive (false);
+		}
 	}
 }

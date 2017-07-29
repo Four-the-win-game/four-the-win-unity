@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject pauseCanvas;
 	public GameObject gameCanvas;
 	public GameObject aiCanvas;
+	public GameObject navigateBoardCanvas;
 	public GameObject buttonRestart;
 	public GameObject buttonResume;
 	public GameObject buttonShowBoard;
@@ -38,8 +39,12 @@ public class GameManager : MonoBehaviour {
 	private string firstPlayerName;
 	private string secondPlayerName;
 
+	private GameProgress gameProgress;
+	private Tutorial tutorial;
+
 	// Use this for initialization
 	void Start () {
+		tutorial = GetComponent<Tutorial> ();
 		gameBoardData = gameBoardObject.getGameBoardData ();
 
 		winnerText = pauseCanvas.GetComponentInChildren<Text> ();
@@ -82,11 +87,7 @@ public class GameManager : MonoBehaviour {
 				Debug.Log ("Finished");
 				aiCanvas.SetActive (false);
 				//Finsiehd calculating
-				gameBoardData.insert (kiImplementation.getMove (), actualPlayer);
-
-				setActualPlayer ((actualPlayer == FIRSTPLAYER) ? SECONDPLAYER : FIRSTPLAYER);
-
-				gameBoardChanged ();
+				insert(kiImplementation.getMove());
 			} else {
 				aiCanvas.SetActive (true);
 			}
@@ -94,12 +95,16 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void restart() {
+		gameProgress = new GameProgress ();
+		tutorial.defaultState ();
+
 		sounds.playTick ();
 
 		setActualPlayer (FIRSTPLAYER);
 		pauseCanvas.SetActive (false);
 		gameCanvas.SetActive (true);
 		aiCanvas.SetActive (false);
+		navigateBoardCanvas.SetActive (false);
 		gameOver = false;
 		calculatingTurn = false;
 
@@ -150,8 +155,24 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void click(int pos) {
+		insert (pos);
+	}
+
+	public void loadPreviousState() {
+		gameBoardData.loadElements (gameProgress.getPrevious ());
+
+	}
+
+	public void loadNextState() {
+		gameBoardData.loadElements (gameProgress.getNext ());
+	}
+
+	private void insert(int pos) {
 		gameBoardObject.setInputElementClicked (pos);
 		gameBoardData.insert (pos, actualPlayer);
+
+		gameProgress.newState (gameBoardData.getBoardAsArray ());
+
 		gameBoardChanged ();
 		changePlayer ();
 	}
@@ -168,6 +189,10 @@ public class GameManager : MonoBehaviour {
 		pauseCanvas.SetActive (true);
 		gameCanvas.SetActive (false);
 		aiCanvas.SetActive (false);
+		navigateBoardCanvas.SetActive (true);
+
+		tutorial.disable ();
+
 		gameOver = true;
 
 		if (MenuAttributes.vsKi && kiPlayer == winner) {
