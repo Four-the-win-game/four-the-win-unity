@@ -6,9 +6,6 @@ using UnityEngine;
 
 public class HardKI : Player, AiListener {
 
-	private int rows;
-	private int columns;
-
 	private GameBoardData board;
 
 	private int playerMe;
@@ -25,8 +22,6 @@ public class HardKI : Player, AiListener {
 
 	public void calcNextMove (int player, GameBoardData gameBoard) {
 		countRatings = 0;
-		columns = gameBoard.boardColumns;
-		rows = gameBoard.boardRows;
 
 		board = gameBoard;
 		validTurns = board.getValidTurns ();

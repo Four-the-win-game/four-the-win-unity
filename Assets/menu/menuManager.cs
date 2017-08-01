@@ -27,7 +27,7 @@ public class menuManager : MonoBehaviour {
 		if (lang == SystemLanguage.German) {
 			LocalizationText.SetLanguage ("DE");
 		} else {
-			//LocalizationText.SetLanguage ("EN");
+			LocalizationText.SetLanguage ("EN");
 		}
 
 		menuCanvas.SetActive (true);

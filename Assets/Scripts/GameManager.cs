@@ -159,19 +159,20 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void loadPreviousState() {
-		gameBoardData.loadElements (gameProgress.getPrevious ());
-
+		gameBoardData.loadElements (gameProgress.getPreviousBoard ());
+		gameBoardObject.setInputElementClicked (gameProgress.getInsertPos ());
 	}
 
 	public void loadNextState() {
-		gameBoardData.loadElements (gameProgress.getNext ());
+		gameBoardData.loadElements (gameProgress.getNextBoard ());
+		gameBoardObject.setInputElementClicked (gameProgress.getInsertPos ());
 	}
 
 	private void insert(int pos) {
 		gameBoardObject.setInputElementClicked (pos);
 		gameBoardData.insert (pos, actualPlayer);
 
-		gameProgress.newState (gameBoardData.getBoardAsArray ());
+		gameProgress.newState (gameBoardData.getBoardAsArray (), pos);
 
 		gameBoardChanged ();
 		changePlayer ();
