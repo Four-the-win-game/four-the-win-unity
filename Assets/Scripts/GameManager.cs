@@ -202,18 +202,22 @@ public class GameManager : MonoBehaviour {
 
 		if (MenuAttributes.vsKi && kiPlayer == winner) {
 			sounds.playLooser ();
-		} else {
+		} else if(MenuAttributes.vsKi) {
 			sounds.playWinner ();
+		} else if (winner == FIRSTPLAYER) {
+			sounds.playWinner ();
+		} else if (winner == SECONDPLAYER) {
+			sounds.playWinner ();
+		} else if (winner == DRAW) {
+			sounds.playLooser ();
 		}
 
 		if (winner == FIRSTPLAYER) {
 			winnerText.text = LocalizationText.GetText ("theWinnerIs") + firstPlayerName;
-			sounds.playWinner ();
 		} else if (winner == SECONDPLAYER) {
 			winnerText.text = LocalizationText.GetText ("theWinnerIs") + secondPlayerName;
 		} else if (winner == DRAW) {
 			winnerText.text = LocalizationText.GetText ("draw");
-			sounds.playLooser ();
 		}
 	}
 
