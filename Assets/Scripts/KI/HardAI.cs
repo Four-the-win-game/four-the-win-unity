@@ -9,7 +9,7 @@ public class HardAI: Player, AiListener {
 	private GameBoardData board;
 
 	private int playerMe;
-	private int deep;
+	private int minDeep;
 
 	private int countRatings;
 	private List<int> validTurns;
@@ -19,7 +19,7 @@ public class HardAI: Player, AiListener {
 	public HardAI (int playerMe, int deep) {
 		this.playerMe = playerMe;
 		countRatings = 0;
-		this.deep = deep;
+		this.minDeep = deep;
 
 		name = "AI";
 	}
@@ -27,7 +27,7 @@ public class HardAI: Player, AiListener {
 	public HardAI(int playerMe, int deep, String name) {
 		this.playerMe = playerMe;
 		countRatings = 0;
-		this.deep = deep;
+		this.minDeep = deep;
 
 		this.name = name;
 	}
@@ -42,7 +42,7 @@ public class HardAI: Player, AiListener {
 		highestRating = int.MinValue;
 
 		for (int i = 0; i < validTurns.Count; i++) {
-			DeepSearch deepSearch = new DeepSearch (board, validTurns[i], deep, playerMe, playerMe, int.MinValue, int.MaxValue);
+			DeepSearch deepSearch = new DeepSearch (board, validTurns[i], minDeep, playerMe, playerMe, int.MinValue, int.MaxValue);
 			deepSearch.setAiListener (this);
 			deepSearch.Start ();
 		}

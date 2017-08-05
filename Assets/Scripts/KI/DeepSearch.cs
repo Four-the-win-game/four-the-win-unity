@@ -89,6 +89,14 @@ public class DeepSearch : BaseThread {
 			int choosenRating = 0;
 			List<int> turns = board.getValidTurns ();
 
+			//TODO sort validTurn
+			/* Count the number of chips in a row / column
+			 * calculate first the rows / column with more chips
+			 * Then is the chance to cut of the next searches higher
+			 */
+
+			//TODO an algorithmus to increase the deep search dynamic for some search branches
+
 			for (int i = 0; i < turns.Count; i++) {
 				DeepSearch search;
 
