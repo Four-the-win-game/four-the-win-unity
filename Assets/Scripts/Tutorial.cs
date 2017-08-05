@@ -18,8 +18,6 @@ public class Tutorial : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		tutorial = PlayerPrefs.GetInt ("tutorial", 1) == 1 ? true : false;
-
 		defaultState ();
 	}
 	
@@ -46,6 +44,8 @@ public class Tutorial : MonoBehaviour {
 	}
 
 	public void defaultState() {
+		tutorial = PlayerPrefs.GetInt ("tutorial", 1) == 1 ? true : false;
+
 		if (tutorial) {
 			textTutorial = textTutorialObject.GetComponent<Text> ();
 			textTutorialObject2.SetActive (true);

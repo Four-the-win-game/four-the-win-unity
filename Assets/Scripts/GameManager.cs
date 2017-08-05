@@ -10,13 +10,18 @@ public class GameManager : MonoBehaviour {
 	public GameBoard gameBoardObject;
 	private GameBoardData gameBoardData;
 	public GameBoardInput gameBoardInput;
+
 	public GameObject pauseCanvas;
 	public GameObject gameCanvas;
 	public GameObject aiCanvas;
 	public GameObject navigateBoardCanvas;
+	public GameObject settingsCanvas;
+
 	public GameObject buttonRestart;
 	public GameObject buttonResume;
 	public GameObject buttonShowBoard;
+	public GameObject buttonSettings;
+
 	public Background background;
 
 	private int kiPlayer; //which player (first or second) is the ki, 0 is no ki
@@ -105,6 +110,7 @@ public class GameManager : MonoBehaviour {
 		}
 
 		setActualPlayer (FIRSTPLAYER);
+		settingsCanvas.SetActive (false);
 		pauseCanvas.SetActive (false);
 		gameCanvas.SetActive (true);
 		aiCanvas.SetActive (false);
@@ -127,34 +133,39 @@ public class GameManager : MonoBehaviour {
 
 		if (!gameOver) { //game was paused
 			winnerText.text = "";
+			settingsCanvas.SetActive (false);
 			buttonShowBoard.SetActive (false);
 			pauseCanvas.SetActive (true);
 			gameCanvas.SetActive (false);
+			aiCanvas.SetActive (false);
 
 			buttonResume.SetActive (true);
 			buttonRestart.SetActive (false);
-			aiCanvas.SetActive (false);
+			buttonSettings.SetActive (true);
+
 			gameOver = true;
 		} else { //game was ended and paused
+			settingsCanvas.SetActive (false);
 			pauseCanvas.SetActive (true);
 			gameCanvas.SetActive (false);
 			aiCanvas.SetActive (false);
 
 			buttonResume.SetActive (false);
 			buttonRestart.SetActive (true);
+			buttonSettings.SetActive (true);
 			gameOver = true;
+
 		}
 	}
 
 	public void resume() {
+		//check settings changed
+		tutorial.defaultState();
+
 		sounds.playTick ();
 
 		pauseCanvas.SetActive (false);
 		gameCanvas.SetActive (true);
-		aiCanvas.SetActive (false);
-
-		buttonResume.SetActive (false);
-		buttonRestart.SetActive (true);
 		gameOver = false;
 	}
 
@@ -187,6 +198,16 @@ public class GameManager : MonoBehaviour {
 
 		pauseCanvas.SetActive (false);
 		gameCanvas.SetActive (true);
+	}
+
+	public void showSettings() {
+		pauseCanvas.SetActive (false);
+		settingsCanvas.SetActive (true);
+	}
+		
+	public void settingsBack() {
+		pauseCanvas.SetActive (true);
+		settingsCanvas.SetActive (false);
 	}
 
 	private void gameEnded(int winner) {
