@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public class HardKI : Player, AiListener {
+public class HardAI: Player, AiListener {
 
 	private GameBoardData board;
 
@@ -14,10 +14,22 @@ public class HardKI : Player, AiListener {
 	private int countRatings;
 	private List<int> validTurns;
 
-	public HardKI (int playerMe, int deep) {
+	private String name;
+
+	public HardAI (int playerMe, int deep) {
 		this.playerMe = playerMe;
 		countRatings = 0;
 		this.deep = deep;
+
+		name = "AI";
+	}
+
+	public HardAI(int playerMe, int deep, String name) {
+		this.playerMe = playerMe;
+		countRatings = 0;
+		this.deep = deep;
+
+		this.name = name;
 	}
 
 	public void calcNextMove (int player, GameBoardData gameBoard) {
@@ -62,7 +74,7 @@ public class HardKI : Player, AiListener {
 	}
 
 	public String getName() {
-		return "Hard AI";
+		return name;
 	}
 }
 

@@ -52,17 +52,17 @@ public class GameManager : MonoBehaviour {
 		if (MenuAttributes.vsKi) {
 			if (MenuAttributes.difficulty == 1) {
 				kiPlayer = SECONDPLAYER;
-				kiImplementation = new HardKI (SECONDPLAYER, 2);
+				kiImplementation = new HardAI (SECONDPLAYER, 2, LocalizationText.GetText ("easyAi"));
 				firstPlayerName = MenuAttributes.firstPlayerName;
 				secondPlayerName = kiImplementation.getName ();
 			} else if (MenuAttributes.difficulty == 2) {
 				kiPlayer = SECONDPLAYER;
-				kiImplementation = new HardKI (SECONDPLAYER, 3);
+				kiImplementation = new HardAI (SECONDPLAYER, 3, LocalizationText.GetText ("normalAi"));
 				firstPlayerName = MenuAttributes.firstPlayerName;
 				secondPlayerName = kiImplementation.getName ();
 			} else {
 				kiPlayer = FIRSTPLAYER;
-				kiImplementation = new HardKI (FIRSTPLAYER, 3);
+				kiImplementation = new HardAI (FIRSTPLAYER, 3, LocalizationText.GetText ("hardAi"));
 				firstPlayerName = kiImplementation.getName ();
 				secondPlayerName = MenuAttributes.firstPlayerName;
 			}

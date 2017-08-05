@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EasyKI : Player {
+public class RandomAi: Player {
 
 	int turn = -1;
 
