@@ -98,7 +98,11 @@ public class GameManager : MonoBehaviour {
 		gameProgress = new GameProgress ();
 		tutorial.defaultState ();
 
-		sounds.playTick ();
+		//only play the sound when the game is restarted
+		//and not when it is started the first time
+		if (gameOver) {
+			sounds.playTick ();
+		}
 
 		setActualPlayer (FIRSTPLAYER);
 		pauseCanvas.SetActive (false);
