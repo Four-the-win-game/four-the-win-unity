@@ -41,7 +41,7 @@ public class menuManager : MonoBehaviour {
 
 		MenuAttributes.vsKi = true;
 		//MenuAttributes.difficulty = 1; is already set in the DifficultyScript
-		MenuAttributes.firstPlayerName = LocalizationText.GetText ("you");
+		MenuAttributes.firstPlayerName = PlayerPrefs.GetString("playerName", LocalizationText.GetText ("you"));
 
 		SceneManager.LoadScene ("singleplayer");
 	}
