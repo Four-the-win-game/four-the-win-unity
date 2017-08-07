@@ -87,13 +87,19 @@ public class DeepSearch : BaseThread {
 			}
 
 			int choosenRating = 0;
-			List<int> turns = board.getValidTurns ();
+			List<int> originalTurns = board.getValidTurns ();
 
 			//TODO sort validTurn
 			/* Count the number of chips in a row / column
 			 * calculate first the rows / column with more chips
 			 * Then is the chance to cut of the next searches higher
 			 */
+			List<TurnWeight> turns = new List<TurnWeight> ();
+			foreach (int turn in originalTurns) {
+				turns.Add(new TurnWeight
+			}
+			//board.countStones (position);
+
 
 			//TODO an algorithmus to increase the deep search dynamic for some search branches
 
@@ -261,6 +267,14 @@ public class DeepSearch : BaseThread {
 			return -weights[sameStonesCount];
 		}
 	}
-
 }
 
+public class TurnWeight {
+	public int position;
+	public int count;
+
+	public TurnWeight(int position, int count) {
+							this.position = position;
+							this.count = count;
+	}
+}

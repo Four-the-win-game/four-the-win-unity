@@ -182,6 +182,42 @@ public class GameBoardData {
 		return true;
 	}
 
+	public int countStones(int insertPosition) {
+		if(insertPosition < boardColumns) { //on top
+			return countColumn(insertPosition);
+		} else if(insertPosition < boardColumns + boardRows) { //right side
+			return countRow(insertPosition - boardColumns);
+		} else if(insertPosition < boardColumns * 2 + boardRows) { //bottom
+			return countColumn(boardColumns * 2 + boardRows - insertPosition - 1);
+		} else if(insertPosition < boardColumns * 2 + boardRows * 2) { //left side
+			return countRow(boardColumns * 2 + boardRows * 2 - insertPosition - 1);
+		}
+
+		return 0;
+	}
+
+	private int countColumn(int column) {
+		int count = 0;
+		for(int i = 0; i < boardRows; i++) {
+			if(board[i, column].player != GameManager.NONE) {
+				count++;
+			}
+		}
+
+		return count;
+	}
+
+	private int countRow(int row) {
+		int count = 0;
+		for(int i = 0; i < boardColumns; i++) {
+			if(board[row, i].player != GameManager.NONE) {
+				count++;
+			}
+		}
+
+		return count;
+	}
+
 	public int calculateWinner(GameBoardData gameBoard) {
 		GridElementData[ , ] board = gameBoard.getGameBoard ();
 		int rows = gameBoard.boardRows;
