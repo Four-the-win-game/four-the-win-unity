@@ -20,6 +20,13 @@ public class DeepSearch : BaseThread {
 
 	private int lowerBound, upperBound;
 
+	private long timeLeftCalculating;
+	private DateTime timeStartCalculating;
+
+	private DateTime getTime() {
+		return DateTime.Now;
+	}
+
 	public override void RunThread() {
 		rating = getRating ();
 		if (listener != null) {
@@ -40,6 +47,15 @@ public class DeepSearch : BaseThread {
 	 * @playerMe which player is me. PlayerOne or PlayerTwo
 	 */
 	public DeepSearch (GameBoardData board, int firstInsertPos, int deep, int playersTurn, int playerMe, int lowerBound, int upperBound) {
+		setup(board, firstInsertPos, deep, playersTurn, playerMe, lowerBound, upperBound);
+	}
+
+	public DeepSearch (GameBoardData board, int firstInsertPos, int deep, int playersTurn, int playerMe, int lowerBound, int upperBound, long timeLeftCalculating) {
+		setup(board, firstInsertPos, deep, playersTurn, playerMe, lowerBound, upperBound);
+		this.timeLeftCalculating = timeLeftCalculating;
+	}
+
+	private void setup(GameBoardData board, int firstInsertPos, int deep, int playersTurn, int playerMe, int lowerBound, int upperBound) {
 		this.deep = deep;
 		insertPosition = firstInsertPos;
 		this.board = board.clone();
@@ -57,6 +73,9 @@ public class DeepSearch : BaseThread {
 		weights [4] = tripleWeight * 10;
 		weights [5] = tripleWeight * 100;
 		weights [6] = tripleWeight * 1000;
+
+		timeStartCalculating = getTime();
+		timeLeftCalculating = 0;
 	}
 
 	private int getRating() {
@@ -75,6 +94,16 @@ public class DeepSearch : BaseThread {
 			//enemy wins
 			//Debug.Log("enemy winner");
 			return int.MinValue;
+		}
+
+		if(deep == 0) {
+			timeLeftCalculating -= (long) (getTime() - timeStartCalculating).TotalMilliseconds;
+			timeStartCalculating = getTime();
+
+			if(timeLeftCalculating > 0) {
+				deep++;
+				//Debug.Log("Adding deep: " + timeLeftCalculating);
+			}
 		}
 
 		if (deep > 0) {
@@ -104,16 +133,19 @@ public class DeepSearch : BaseThread {
 			//TODO an algorithmus to increase the deep search dynamic for some search branches
 
 			for (int i = 0; i < turns.Count; i++) {
+				timeLeftCalculating -= (long) (getTime() - timeStartCalculating).TotalMilliseconds;
+				timeStartCalculating = getTime();
+
 				DeepSearch search;
 
 				if (i == 0) {
-					search = new DeepSearch(board.clone(), turns[i], deep, newPlayersTurn, playerMe, lowerBound, upperBound);
+					search = new DeepSearch(board.clone(), turns[i], deep, newPlayersTurn, playerMe, lowerBound, upperBound, timeLeftCalculating);
 				}
 
 				if (newPlayersTurn == playerMe) { 
-					search = new DeepSearch (board.clone (), turns [i], deep, newPlayersTurn, playerMe, choosenRating, upperBound);
+					search = new DeepSearch (board.clone (), turns [i], deep, newPlayersTurn, playerMe, choosenRating, upperBound, timeLeftCalculating);
 				} else {
-					search = new DeepSearch (board.clone (), turns [i], deep, newPlayersTurn, playerMe, lowerBound, choosenRating);
+					search = new DeepSearch (board.clone (), turns [i], deep, newPlayersTurn, playerMe, lowerBound, choosenRating, timeLeftCalculating);
 				}
 
 				int rating = search.getRating ();

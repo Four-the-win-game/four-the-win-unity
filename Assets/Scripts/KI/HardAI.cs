@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class HardAI: Player, AiListener {
 
+	private long timeCalculating;
+
 	private GameBoardData board;
 
 	private int playerMe;
@@ -16,18 +18,20 @@ public class HardAI: Player, AiListener {
 
 	private String name;
 
-	public HardAI (int playerMe, int deep) {
+	public HardAI (int playerMe, int deep, long timeCalculating) {
 		this.playerMe = playerMe;
 		countRatings = 0;
-		this.minDeep = deep;
+		this.deep = deep;
+		this.timeCalculating = timeCalculating;
 
 		name = "AI";
 	}
 
-	public HardAI(int playerMe, int deep, String name) {
+	public HardAI(int playerMe, int deep, long timeCalculating,  String name) {
 		this.playerMe = playerMe;
 		countRatings = 0;
-		this.minDeep = deep;
+		this.deep = deep;
+		this.timeCalculating = timeCalculating;
 
 		this.name = name;
 	}
@@ -41,8 +45,15 @@ public class HardAI: Player, AiListener {
 		turnHighestRating = validTurns [0];
 		highestRating = int.MinValue;
 
+		int deep = this.deep;
+		//the ai calculates too long in the first moves
+		//reduce the deep 
+		if(gameBoard.numberBlocks <= 4) {
+			deep--;
+		}
+
 		for (int i = 0; i < validTurns.Count; i++) {
-			DeepSearch deepSearch = new DeepSearch (board, validTurns[i], minDeep, playerMe, playerMe, int.MinValue, int.MaxValue);
+			DeepSearch deepSearch = new DeepSearch (board, validTurns[i], deep, playerMe, playerMe, int.MinValue, int.MaxValue, timeCalculating);
 			deepSearch.setAiListener (this);
 			deepSearch.Start ();
 		}

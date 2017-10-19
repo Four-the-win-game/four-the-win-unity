@@ -7,6 +7,8 @@ public class GameBoardData {
 	public int boardRows;
 	public int boardColumns;
 
+	public int numberBlocks;
+
 	private GridElementData[,] board;
 
 	public GameBoardData(int rows, int columns) {
@@ -31,6 +33,7 @@ public class GameBoardData {
 
 	public void initGameBoard(int row, int column, GridElement gridElement) {
 		board[ row, column] = new GridElementData (GameManager.NONE, gridElement);
+		numberBlocks = 0;
 	}
 
 	public void reset() {
@@ -39,9 +42,13 @@ public class GameBoardData {
 				board[ i, j].setPlayer (GameManager.NONE);
 			}
 		}
+
+		numberBlocks = 0;
 	}
 
 	public void insert(int position, int player) {
+		numberBlocks++;
+
 		if(position < boardColumns) { //on top
 			insertIntoColumn(position, true, player);
 		} else if(position < boardColumns + boardRows) { //right side

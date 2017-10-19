@@ -32,3 +32,15 @@ sysinfo.txt
 Packages/manifest\.json
 
 Packages/manifest\.json\.meta
+
+ProjectSettings/DynamicsManager\.asset
+
+ProjectSettings/Physics2DSettings\.asset
+
+ProjectSettings/ProjectSettings\.asset
+
+ProjectSettings/ProjectVersion\.txt
+
+Packages/manifest\.json
+
+Packages/manifest\.json\.meta
